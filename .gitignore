@@ -3,6 +3,10 @@ test-results/
 playwright-report/
 blob-report/
 .playwright/
+coverage/
+.nyc_output/
+dist/
+*.tsbuildinfo
 .env
 .env.*
 !.env.example
