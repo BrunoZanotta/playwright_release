@@ -1,8 +1,8 @@
 import { test as base } from '@playwright/test';
-import { CartPage } from '../pages/CartPage.js';
-import { CheckoutPage } from '../pages/CheckoutPage.js';
-import { InventoryPage } from '../pages/InventoryPage.js';
-import { LoginPage } from '../pages/LoginPage.js';
+import { CartPage } from '../pages/cartPage.js';
+import { CheckoutPage } from '../pages/checkoutPage.js';
+import { InventoryPage } from '../pages/inventoryPage.js';
+import { LoginPage } from '../pages/loginPage.js';
 
 type Pages = {
   cartPage: CartPage;

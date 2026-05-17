@@ -15,6 +15,7 @@ export class CheckoutPage {
   readonly continueButton: Locator;
   readonly finishButton: Locator;
   readonly completeHeader: Locator;
+  readonly ponyExpressImage: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -24,6 +25,7 @@ export class CheckoutPage {
     this.continueButton = page.getByRole('button', { name: 'Continue' });
     this.finishButton = page.getByRole('button', { name: 'Finish' });
     this.completeHeader = page.locator('[data-test="complete-header"]');
+    this.ponyExpressImage = page.locator('[data-test="pony-express"]');
   }
 
   async fillCustomer(customer: Customer) {
@@ -42,5 +44,9 @@ export class CheckoutPage {
   async expectOrderComplete() {
     await expect(this.page).toHaveURL(/.*checkout-complete\.html/);
     await expect(this.completeHeader).toHaveText('Thank you for your order!');
+  }
+
+  async expectConfirmationVisuals() {
+    await expect(this.ponyExpressImage).toBeVisible();
   }
 }
