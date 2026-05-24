@@ -13,7 +13,7 @@ Criar planos de teste executaveis e rastreaveis para o projeto Playwright Releas
 
 Este projeto usa:
 
-- Playwright Test `1.56.1`
+- Playwright Test `1.60.0`
 - TypeScript com ESM
 - configuracao principal em `playwright.config.ts`
 - helper de login em `src/helpers/loginEnv.ts`
@@ -75,7 +75,7 @@ O plano deve ser suficiente para o `generator` criar testes sem precisar reinter
 6. Separar cenarios por risco e por objetivo funcional.
 7. Definir steps nomeados, independentes e com estado inicial claro.
 8. Associar cada step a uma acao ou assertion de Page Object sempre que possivel.
-9. Especificar verificacoes que possam ser implementadas com Playwright `expect`.
+9. Especificar verificacoes que possam ser implementadas com metodos `expect...` de Page Object.
 10. Sugerir tags de suite e teste quando fizer sentido para filtros de execucao.
 11. Registrar lacunas, suposicoes e dependencia de dados.
 12. Marcar quando uma massa de teste deve permanecer inline ou ser avaliada pelo `data`.
@@ -104,8 +104,13 @@ O plano deve ser suficiente para o `generator` criar testes sem precisar reinter
 - Novos dados compartilhados devem entrar em `src/data`.
 - Variaveis de ambiente devem entrar por `.env`, com leitura em `playwright.config.ts` e helper explicito em `src/helpers/loginEnv.ts` para `BASE_URL`, `USERNAME` e `PASSWORD`.
 - Novas fixtures devem entrar em `src/fixtures/fixtures.ts` apenas se reduzirem duplicacao real.
-- Testes gerados a partir do plano devem importar `test` e `expect` de `src/fixtures/fixtures.js`.
+- Testes gerados a partir do plano devem importar `test` de `src/fixtures/fixtures.js`.
 - Specs geradas devem organizar acoes relevantes com `test.step`.
+- Specs NAO devem ter logica inline — toda logica fica em Page Object.
+- Page Objects devem ter todos os locators como `readonly` no constructor.
+- Page Objects NAO devem ter seletores inline nos metodos.
+- Page Objects NAO devem ter metodos duplicados para 1 vs N items.
+- Page Objects NAO devem ter metodos intermediarios chamados por apenas um metodo.
 - Quando houver tags no plano, specs geradas devem usar `test.describe(..., { tag: '@tag' })` e `test(..., { tag: '@tag' })`.
 - Page Objects devem expor metodos de acao pequenos e metodos `assert...` ou `expect...` para verificacoes de estado.
 - URLs devem vir do runtime configurado do Playwright, exceto no fluxo de login, onde `src/helpers/loginEnv.ts` fornece `BASE_URL` e credenciais.

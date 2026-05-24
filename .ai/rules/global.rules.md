@@ -38,8 +38,16 @@ Ler tambem, quando relevante:
 
 - Specs devem usar `test.step` em fluxos relevantes
 - Imports de teste devem sair de `src/fixtures/fixtures.ts`
+- Specs NAO devem ter logica inline (const com calculos, expect direto, seletores inline)
 - Assertions devem ser web-first
 - Nao usar sleeps fixos, `networkidle` ou waits manuais sem justificativa excepcional
+
+## Page Object Style
+
+- Todos os locators DEVEM ser `readonly` na classe e inicializados no `constructor`
+- Metodos NAO devem usar `this.page.locator(...)` ou `this.page.getByRole(...)` inline
+- Usar as propriedades `readonly` declaradas no constructor
+- Nao criar metodos duplicados para 1 vs N items — usar versao pluralizada com array
 
 ## Documentation Discipline
 

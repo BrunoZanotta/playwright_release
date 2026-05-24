@@ -77,10 +77,9 @@ Quando a falha expuser lacuna no plano ou nos agentes, registrar uma nota em `.i
    - fixture/dados, se o setup estava incorreto
    - config, se a falha for estrutural da execucao
 9. Preservar `test.step` e tags existentes ao editar specs.
-10. Rodar novamente o teste afetado.
-11. Rodar validacao mais ampla quando a correcao tocar codigo compartilhado.
-12. Submeter a correcao ao `reviewer` e ao `guardian` se a mudanca tocar fixture, dados, auth, env ou config.
-12. Se a correcao tocar auth, env, URL, config ou dados, submeter ao `guardian` para validar que nenhuma credencial foi exposta.
+10. Respeitar o padrao de `readonly` locators em Page Objects — nunca introduzir seletores inline nos metodos.
+11. Rodar novamente o teste afetado.
+12. Rodar validacao mais ampla quando a correcao tocar codigo compartilhado.
 13. Submeter a correcao ao `reviewer` e ao `guardian` se a mudanca tocar fixture, dados, auth, env ou config.
 14. Repetir ate passar ou ate haver bloqueio externo comprovado.
 
@@ -97,6 +96,7 @@ Quando a falha expuser lacuna no plano ou nos agentes, registrar uma nota em `.i
 - Nao marcar `test.skip` ou `test.fixme` sem evidencia e comentario claro.
 - Nao remover `test.step` ou tags para simplificar a correcao.
 - Nao acessar `.env` nem `process.env` fora de `playwright.config.ts` e `src/helpers/loginEnv.ts`.
+- Nao introduzir seletores inline em metodos de Page Object — usar `readonly` locators.
 - Preservar mudancas locais nao relacionadas.
 - Se o comportamento atual da app contradiz o plano, atualizar ou apontar o plano.
 
@@ -105,7 +105,7 @@ Quando a falha expuser lacuna no plano ou nos agentes, registrar uma nota em `.i
 Use esta ordem de preferencia:
 
 1. Ajustar assertiva para refletir comportamento correto e observavel.
-2. Tornar locator mais semantico ou mais estavel.
+2. Tornar locator mais semantico ou mais estavel (como `readonly` no constructor).
 3. Mover logica repetida para Page Object ja existente.
 4. Ajustar dados versionados quando o problema for massa de teste.
 5. Ajustar fixture quando o setup compartilhado estiver incorreto.
@@ -113,16 +113,28 @@ Use esta ordem de preferencia:
 
 ## Padroes Do Projeto
 
-- Tests importam `test` e, quando necessario, `expect` de `../src/fixtures/fixtures.js`.
+- Tests importam `test` de `../src/fixtures/fixtures.js`.
+- Specs NAO devem ter `const` com calculos, `expect` inline ou logica de UI — toda logica fica no Page Object.
 - Specs usam `test.step` para passos principais e preservam tags como `{ tag: '@smoke' }`.
 - Page Objects encapsulam acoes de dominio, nao detalhes aleatorios de uma unica spec.
-- Page Objects mantem `readonly page`, `readonly` locators, metodos pequenos de acao e metodos `assert...` ou `expect...`.
-- A fixture central fica em `src/fixtures/fixtures.ts`, exporta `expect` e expõe somente objetos existentes.
+- Page Objects mantem `readonly page`, `readonly` locators inicializados no constructor.
+- Page Objects NAO usam seletores inline nos metodos — todo seletor e `readonly`.
+- Page Objects NAO tem metodos duplicados para 1 vs N items.
+- Page Objects NAO tem metodos intermediarios chamados por apenas um metodo.
+- A fixture central fica em `src/fixtures/fixtures.ts`, exporta `expect` e expoe somente objetos existentes.
 - `playwright.config.ts` e `src/helpers/loginEnv.ts` sao as unicas fronteiras permitidas para `.env` e `process.env`.
-- `LoginPage.goto()` deve validar que a pagina de login carregou.
-- `InventoryPage.expectLoaded()` deve validar URL e titulo.
-- `CartPage.expectProduct()` deve validar URL e produto esperado.
-- `CheckoutPage` deve validar as etapas `checkout-step-one`, `checkout-step-two` e `checkout-complete`.
+- `LoginPage.goto()` navega e valida login page.
+- `LoginPage.loginAsUser()` preenche credenciais e submete.
+- `LoginPage.assertLoginSuccess()` valida redirect e cart link.
+- `InventoryPage.expectLoaded()` valida URL e titulo.
+- `InventoryPage.addMultipleProductsToCart(names)` adiciona multiplos produtos ao carrinho.
+- `InventoryPage.openCart()` abre o carrinho.
+- `CartPage.expectProducts(names)` valida URL e itens no carrinho.
+- `CartPage.checkout()` inicia checkout.
+- `CheckoutPage.fillCustomer(customer)` preenche dados e continua.
+- `CheckoutPage.expectValidTotal()` valida que total = subtotal + tax.
+- `CheckoutPage.finishOrder()` finaliza o pedido.
+- `CheckoutPage.expectOrderComplete()` valida confirmacao.
 
 ## Relatorio Final Esperado
 

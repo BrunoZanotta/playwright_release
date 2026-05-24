@@ -60,8 +60,9 @@ Use este agente quando:
 ## Padrao Atual Do Projeto
 
 - `src/data/checkoutData.ts` e o exemplo canonico atual.
-- `checkoutCustomer` e compartilhado.
-- `productName` permanece inline em `tests/singleProductCheckoutFlow.spec.ts` porque ainda representa um detalhe especifico do fluxo.
+- `checkoutCustomer` e compartilhado entre `singleProductCheckoutFlow.spec.ts` e `multiProductCheckoutFlow.spec.ts`.
+- `productName` permanece inline em `tests/singleProductCheckoutFlow.spec.ts` porque representa um detalhe especifico do fluxo.
+- `products` (array de 3 itens) permanece inline em `tests/multiProductCheckoutFlow.spec.ts` porque e especifico daquele cenario.
 
 ## Bloqueios
 
