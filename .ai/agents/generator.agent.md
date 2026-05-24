@@ -72,7 +72,7 @@ Toda entrega deve informar:
 4. Executar ou explorar a aplicacao quando a UI ou o seletor nao estiverem claros.
 5. Reutilizar Page Objects antes de adicionar novos metodos.
 6. Adicionar novos metodos de Page Object apenas quando eles representarem uma acao ou verificacao do dominio.
-7. Escrever a spec com `test` e, quando necessario, `expect` importados de `../src/fixtures/fixtures.js`.
+7. Escrever a spec com `test` importado de `../src/fixtures/fixtures.js`.
 8. Quebrar o fluxo em `test.step` para cada passo relevante do plano.
 9. Aplicar `test.describe(..., { tag: '@tag' })` e `test(..., { tag: '@tag' })` quando o plano definir tags.
 10. Usar assertions web-first do Playwright.
@@ -89,7 +89,9 @@ Toda entrega deve informar:
 - Usar TypeScript ESM com imports `.js` para arquivos locais.
 - Preferir Page Objects para fluxos repetidos.
 - Manter specs legiveis e centradas no comportamento.
-- Specs devem usar `test.step` para os passos principais do fluxo.
+- Specs DEVEM usar `test.step` para os passos principais do fluxo.
+- Specs NAO DEVEM conter `const` com calculos, `expect` inline ou logica de UI.
+- Toda logica de calculo e validacao deve estar em metodos de Page Object.
 - Tags de suite e teste devem ser preservadas quando existirem no plano.
 - Usar `getByRole`, `getByLabel`, `getByPlaceholder` ou `data-test` estavel.
 - Usar `expect(locator).toBeVisible()`, `toHaveText()`, `toHaveURL()` e similares.
@@ -158,14 +160,16 @@ Specs e fixtures devem consumir o runtime ja configurado do Playwright. No fluxo
 
 ### Specs
 
-Exemplo de estrutura esperada:
+Specs DEVEM seguir este padrao: so chamadas a Page Objects e dados, sem logica inline.
+
+Exemplo canonico (single product):
 
 ```ts
 import { checkoutCustomer } from '../src/data/checkoutData.js';
 import { test } from '../src/fixtures/fixtures.js';
 
-test.describe('SauceDemo checkout', { tag: '@checkout' }, () => {
-  test('completes a purchase with the standard user', { tag: '@smoke' }, async ({
+test.describe('SauceDemo single product checkout', () => {
+  test('completes a single product purchase with the standard user', async ({
     cartPage,
     checkoutPage,
     inventoryPage,
@@ -173,28 +177,80 @@ test.describe('SauceDemo checkout', { tag: '@checkout' }, () => {
   }) => {
     const productName = 'Sauce Labs Backpack';
 
-    await test.step('Step 1: Login', async () => {
+    await test.step('Step 1: Login with the standard user', async () => {
       await loginPage.goto();
-      await loginPage.assertOnLoginPage();
       await loginPage.loginAsUser();
       await loginPage.assertLoginSuccess();
       await inventoryPage.expectLoaded();
     });
 
-    await test.step('Step 2: Add product to cart', async () => {
-      await inventoryPage.addProductToCart(productName);
+    await test.step('Step 2: Add the product to cart', async () => {
+      await inventoryPage.addMultipleProductsToCart([productName]);
       await inventoryPage.openCart();
-      await cartPage.expectProduct(productName);
     });
 
-    await test.step('Step 3: Complete checkout', async () => {
+    await test.step('Step 3: Review the cart and start checkout', async () => {
+      await cartPage.expectProducts([productName]);
       await cartPage.checkout();
+    });
+
+    await test.step('Step 4: Complete the checkout flow', async () => {
       await checkoutPage.fillCustomer(checkoutCustomer);
       await checkoutPage.finishOrder();
       await checkoutPage.expectOrderComplete();
     });
 
-    await test.step('Step 4: Validate confirmation visuals', async () => {
+    await test.step('Step 5: Validate the confirmation visuals', async () => {
+      await checkoutPage.expectConfirmationVisuals();
+    });
+  });
+});
+```
+
+Exemplo com multi-produtos e validacao de total:
+
+```ts
+import { checkoutCustomer } from '../src/data/checkoutData.js';
+import { test } from '../src/fixtures/fixtures.js';
+
+const products = [
+  'Sauce Labs Backpack',
+  'Sauce Labs Bike Light',
+  'Sauce Labs Bolt T-Shirt'
+] as const;
+
+test.describe('SauceDemo multi-product checkout', () => {
+  test('completes a multi-product purchase with the standard user', async ({
+    cartPage,
+    checkoutPage,
+    inventoryPage,
+    loginPage
+  }) => {
+    await test.step('Step 1: Login with the standard user', async () => {
+      await loginPage.goto();
+      await loginPage.loginAsUser();
+      await loginPage.assertLoginSuccess();
+      await inventoryPage.expectLoaded();
+    });
+
+    await test.step('Step 2: Add 3 products to cart', async () => {
+      await inventoryPage.addMultipleProductsToCart([...products]);
+      await inventoryPage.openCart();
+    });
+
+    await test.step('Step 3: Review the cart and start checkout', async () => {
+      await cartPage.expectProducts([...products]);
+      await cartPage.checkout();
+    });
+
+    await test.step('Step 4: Complete the checkout flow', async () => {
+      await checkoutPage.fillCustomer(checkoutCustomer);
+      await checkoutPage.expectValidTotal();
+      await checkoutPage.finishOrder();
+      await checkoutPage.expectOrderComplete();
+    });
+
+    await test.step('Step 5: Validate the confirmation visuals', async () => {
       await checkoutPage.expectConfirmationVisuals();
     });
   });
@@ -203,9 +259,44 @@ test.describe('SauceDemo checkout', { tag: '@checkout' }, () => {
 
 ### Page Objects
 
-Page Objects devem ter `readonly page`, `readonly` locators, metodos pequenos de acao e metodos `assert...` ou `expect...` para verificacoes.
+Page Objects DEVEM seguir este padrao obrigatorio:
 
-Exemplo de estilo:
+1. Todos os locators declarados como `readonly` na classe
+2. Todos os locators inicializados no `constructor`
+3. Metodos usam `this.locatorProperty` — NUNCA seletores inline como `this.page.locator(...)` ou `this.page.getByRole(...)`
+4. NAO criar metodos duplicados para 1 vs N items — usar a versao pluralizada com array
+5. NAO criar metodos intermediarios que so sao chamados por um outro metodo — inliner a logica
+
+Exemplo (cartPage):
+
+```ts
+export class CartPage {
+  readonly page: Page;
+  readonly checkoutButton: Locator;
+  readonly itemName: Locator;
+  readonly itemPrice: Locator;
+
+  constructor(page: Page) {
+    this.page = page;
+    this.checkoutButton = page.getByRole('button', { name: 'Checkout' });
+    this.itemName = page.locator('[data-test="inventory-item-name"]');
+    this.itemPrice = page.locator('[data-test="inventory-item-price"]');
+  }
+
+  async expectProducts(productNames: string[]) {
+    await expect(this.page).toHaveURL(/.*cart\.html/);
+    for (const name of productNames) {
+      await expect(this.itemName.filter({ hasText: name })).toBeVisible();
+    }
+  }
+
+  async checkout() {
+    await this.checkoutButton.click();
+  }
+}
+```
+
+Exemplo (loginPage):
 
 ```ts
 export class LoginPage {
@@ -213,37 +304,33 @@ export class LoginPage {
   readonly usernameInput: Locator;
   readonly passwordInput: Locator;
   readonly loginButton: Locator;
+  readonly cartLink: Locator;
 
   constructor(page: Page) {
     this.page = page;
     this.usernameInput = page.getByPlaceholder('Username');
     this.passwordInput = page.getByPlaceholder('Password');
     this.loginButton = page.getByRole('button', { name: 'Login' });
+    this.cartLink = page.locator('[data-test="shopping-cart-link"]');
   }
 
   async goto() {
     await this.page.goto(buildLoginUrl('/'));
-  }
-
-  async fillUsername(username: string) {
-    await this.usernameInput.fill(username);
-  }
-
-  async fillPassword(password: string) {
-    await this.passwordInput.fill(password);
-  }
-
-  async clickLogin() {
-    await this.loginButton.click();
+    await expect(this.page).toHaveURL(buildLoginUrl('/'));
+    await expect(this.usernameInput).toBeVisible();
+    await expect(this.passwordInput).toBeVisible();
+    await expect(this.loginButton).toBeVisible();
   }
 
   async loginAsUser() {
-    await this.login(loginUsername, loginPassword);
+    await this.usernameInput.fill(loginUsername);
+    await this.passwordInput.fill(loginPassword);
+    await this.loginButton.click();
   }
 
-  async assertOnLoginPage() {
-    await expect(this.page).toHaveURL(buildLoginUrl('/'));
-    await expect(this.loginButton).toBeVisible();
+  async assertLoginSuccess() {
+    await expect(this.page).toHaveURL(buildLoginUrl('/inventory.html'));
+    await expect(this.cartLink).toBeVisible();
   }
 }
 ```
@@ -254,12 +341,14 @@ Uma geracao esta pronta quando:
 
 - a spec expressa o cenario do plano sem passos ocultos importantes
 - a spec usa `test.step` nos passos principais
+- a spec NAO contem `const` com calculos, `expect` inline ou logica de UI
 - tags do plano foram mantidas na suite e no teste
 - o codigo compila
 - o teste passa no projeto alvo ou a falha e explicada com evidencia
 - seletores sao resilientes para a UI atual do SauceDemo
 - o teste nao depende de execucao anterior
 - Page Objects continuam coesos e pequenos
+- Page Objects usam apenas `readonly` locators, sem seletores inline nos metodos
 - fixture central continua enxuta
 - configuracao continua centralizada nos pontos permitidos
 - massa compartilhada so foi promovida para `src/data` quando houve reutilizacao real
@@ -269,6 +358,10 @@ Uma geracao esta pronta quando:
 
 - Gerar codigo apenas por replay sem revisar manutencao.
 - Colocar toda a logica dentro da spec quando ja existe Page Object.
+- Ter `const`, `expect` ou calculos inline na spec — toda logica fica no Page Object.
+- Ter seletores inline em metodos de Page Object — todo seletor deve ser `readonly` no constructor.
+- Criar metodos duplicados para 1 vs N items (ex: `expectProduct` + `expectProducts`).
+- Criar metodos intermediarios so chamados por um unico metodo — inliner a logica.
 - Criar fixtures para um unico uso trivial.
 - Usar textos muito longos como seletor principal quando existe `data-test`.
 - Fazer asserts depois de navegacoes sem validar o estado da pagina.

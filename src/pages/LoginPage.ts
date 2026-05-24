@@ -19,36 +19,16 @@ export class LoginPage {
 
   async goto() {
     await this.page.goto(buildLoginUrl('/'));
-    await this.assertOnLoginPage();
-  }
-
-  async fillUsername(username: string) {
-    await this.usernameInput.fill(username);
-  }
-
-  async fillPassword(password: string) {
-    await this.passwordInput.fill(password);
-  }
-
-  async clickLogin() {
-    await this.loginButton.click();
-  }
-
-  async login(username: string, password: string) {
-    await this.fillUsername(username);
-    await this.fillPassword(password);
-    await this.clickLogin();
-  }
-
-  async loginAsUser() {
-    await this.login(loginUsername, loginPassword);
-  }
-
-  async assertOnLoginPage() {
     await expect(this.page).toHaveURL(buildLoginUrl('/'));
     await expect(this.usernameInput).toBeVisible();
     await expect(this.passwordInput).toBeVisible();
     await expect(this.loginButton).toBeVisible();
+  }
+
+  async loginAsUser() {
+    await this.usernameInput.fill(loginUsername);
+    await this.passwordInput.fill(loginPassword);
+    await this.loginButton.click();
   }
 
   async assertLoginSuccess() {

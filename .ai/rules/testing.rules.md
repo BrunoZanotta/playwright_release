@@ -7,6 +7,9 @@
 - Usar tags quando houver valor operacional real: smoke, regression, checkout, login
 - Cada teste deve ser independente
 - O estado inicial deve ser previsivel
+- Specs NAO devem conter `const` com calculos, `expect` inline ou logica de UI
+- Toda logica de verificacao e calculo deve estar em metodos de Page Object (ex: `expectValidTotal()`)
+- Specs so devem chamar metodos de Page Objects e consumir dados de `src/data`
 
 ## Fixtures
 
@@ -19,8 +22,12 @@
 
 - Metodos devem representar acoes e verificacoes de dominio
 - Evitar detalhe de seletor espalhado nas specs
+- Todos os locators DEVEM ser declarados como `readonly` na classe e inicializados no `constructor`
+- Metodos NAO devem conter seletores inline (`this.page.locator(...)`, `this.page.getByRole(...)`) — todo seletor deve ser propriedade `readonly`
+- Excecao: `.filter({ hasText: name })` pode ser encadeado inline sobre um `readonly` base
 - Preferir locators por role, placeholder, label ou `data-test`
 - Assertions estruturais devem ficar no Page Object quando forem reutilizaveis
+- NAO criar metodos duplicados que aceitam 1 vs N items (ex: `expectProduct` + `expectProducts`) — usar a versao pluralizada com array
 - Pages nao devem ler `.env` nem `process.env`; `src/pages/loginPage.ts` deve consumir `src/helpers/loginEnv.ts`
 
 ## Data

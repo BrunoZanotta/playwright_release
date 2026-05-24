@@ -45,8 +45,8 @@ Use este agente quando:
 5. Avaliar mudancas de seguranca nas release notes do Playwright.
 6. Validar se MCP com `npx --no-install` continua compativel com a nova versao.
 7. Traduzir cada categoria em impacto local concreto.
-6. Priorizar o que precisa de validacao imediata no projeto.
-7. Sugerir o menor plano de adaptacao e validacao.
+8. Priorizar o que precisa de validacao imediata no projeto.
+9. Sugerir o menor plano de adaptacao e validacao.
 
 ## Regras
 
@@ -57,10 +57,12 @@ Use este agente quando:
 
 ## Padrao Atual Do Projeto
 
+- Versao atual: Playwright Test `1.60.0`
 - Fixture central em `src/fixtures/fixtures.ts`
 - Helper de login em `src/helpers/loginEnv.ts`
-- Fluxo principal atual em `tests/singleProductCheckoutFlow.spec.ts`
+- Fluxos em `tests/singleProductCheckoutFlow.spec.ts` e `tests/multiProductCheckoutFlow.spec.ts`
 - Page Objects atuais: `loginPage.ts`, `inventoryPage.ts`, `cartPage.ts`, `checkoutPage.ts`
+- Todos os locators em Page Objects sao `readonly` no constructor
 
 ## Formato Esperado
 

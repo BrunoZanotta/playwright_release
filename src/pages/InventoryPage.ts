@@ -5,11 +5,17 @@ export class InventoryPage {
   readonly page: Page;
   readonly title: Locator;
   readonly cartLink: Locator;
+  readonly inventoryItem: Locator;
+  readonly addToCartButton: Locator;
+  readonly itemPrice: Locator;
 
   constructor(page: Page) {
     this.page = page;
     this.title = page.getByText('Products');
-    this.cartLink = page.locator('[data-test="shopping-cart-link"]');
+    this.cartLink = page.locator('[data-test="shopping-cart-link"]').describe('Shopping cart link');
+    this.inventoryItem = page.locator('[data-test="inventory-item"]').describe('Inventory product card');
+    this.addToCartButton = page.getByRole('button', { name: 'Add to cart' }).describe('Add to cart action');
+    this.itemPrice = page.locator('[data-test="inventory-item-price"]').describe('Product price label');
   }
 
   async expectLoaded() {
@@ -17,14 +23,25 @@ export class InventoryPage {
     await expect(this.title).toBeVisible();
   }
 
-  async addProductToCart(productName: string) {
-    const product = this.page.locator('[data-test="inventory-item"]').filter({
+  async addMultipleProductsToCart(productNames: string[]) {
+    for (const name of productNames) {
+      const product = this.inventoryItem.filter({
+        hasText: name
+      });
+
+      await expect(product).toBeVisible();
+      await product.locator(this.addToCartButton).click({ steps: 5 });
+    }
+
+    await expect(this.cartLink).toHaveText(String(productNames.length));
+  }
+
+  async getProductPrice(productName: string): Promise<number> {
+    const product = this.inventoryItem.filter({
       hasText: productName
     });
-
-    await expect(product).toBeVisible();
-    await product.getByRole('button', { name: 'Add to cart' }).click();
-    await expect(this.cartLink).toHaveText('1');
+    const priceText = await product.locator(this.itemPrice).textContent();
+    return parseFloat(priceText!.replace('$', ''));
   }
 
   async openCart() {
