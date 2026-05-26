@@ -10,6 +10,7 @@
 - Specs NAO devem conter `const` com calculos, `expect` inline ou logica de UI
 - Toda logica de verificacao e calculo deve estar em metodos de Page Object (ex: `expectValidTotal()`)
 - Specs so devem chamar metodos de Page Objects e consumir dados de `src/data`
+- Specs em `tests/<versao>/` usam imports com prefixo `../../src/`
 
 ## Fixtures
 

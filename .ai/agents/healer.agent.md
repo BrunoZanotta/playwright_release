@@ -41,7 +41,7 @@ Se nao houver log, rodar primeiro o menor comando que reproduza a falha.
 
 O output principal e uma correcao versionavel em um ou mais destes locais:
 
-- `tests/*.spec.ts`
+- `tests/<versao>/*.spec.ts`
 - `src/pages/*.ts`
 - `src/fixtures/fixtures.ts`
 - `src/data/*.ts`
@@ -113,7 +113,7 @@ Use esta ordem de preferencia:
 
 ## Padroes Do Projeto
 
-- Tests importam `test` de `../src/fixtures/fixtures.js`.
+- Tests importam `test` de `../../src/fixtures/fixtures.js` (specs ficam em `tests/<versao>/`).
 - Specs NAO devem ter `const` com calculos, `expect` inline ou logica de UI — toda logica fica no Page Object.
 - Specs usam `test.step` para passos principais e preservam tags como `{ tag: '@smoke' }`.
 - Page Objects encapsulam acoes de dominio, nao detalhes aleatorios de uma unica spec.
@@ -130,6 +130,9 @@ Use esta ordem de preferencia:
 - `InventoryPage.addMultipleProductsToCart(names)` adiciona multiplos produtos ao carrinho.
 - `InventoryPage.openCart()` abre o carrinho.
 - `CartPage.expectProducts(names)` valida URL e itens no carrinho.
+- `InventoryPage.getProductPrice(name)` retorna o preco de um produto.
+- `CartPage.getAllCartItemPrices()` retorna todos os precos do carrinho.
+- `CartPage.calculateCartTotal()` calcula o total dos itens no carrinho.
 - `CartPage.checkout()` inicia checkout.
 - `CheckoutPage.fillCustomer(customer)` preenche dados e continua.
 - `CheckoutPage.expectValidTotal()` valida que total = subtotal + tax.

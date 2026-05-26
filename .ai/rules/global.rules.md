@@ -17,7 +17,7 @@ Ler tambem, quando relevante:
 
 ## Repository Boundaries
 
-- Codigo executavel fica em `src`, `tests` e `playwright.config.ts`
+- Codigo executavel fica em `src`, `tests/<versao>` e `playwright.config.ts`
 - Artefatos de IA ficam dentro de `.ia`
 - Configuracao de MCP do editor continua em `.vscode/mcp.json`
 - Variaveis de ambiente entram por `.env`, mas so modulos dedicados de configuracao podem le-las
@@ -37,7 +37,7 @@ Ler tambem, quando relevante:
 ## Test Style
 
 - Specs devem usar `test.step` em fluxos relevantes
-- Imports de teste devem sair de `src/fixtures/fixtures.ts`
+- Imports de teste devem sair de `src/fixtures/fixtures.ts` (specs usam `../../src/fixtures/fixtures.js`)
 - Specs NAO devem ter logica inline (const com calculos, expect direto, seletores inline)
 - Assertions devem ser web-first
 - Nao usar sleeps fixos, `networkidle` ou waits manuais sem justificativa excepcional

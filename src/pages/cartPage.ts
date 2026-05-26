@@ -39,4 +39,8 @@ export class CartPage {
   async checkout() {
     await this.checkoutButton.click({ steps: 5 });
   }
+
+  async showChapter(title: string, options?: { description?: string; duration?: number }) {
+    await this.page.screencast.showChapter(title, options);
+  }
 }

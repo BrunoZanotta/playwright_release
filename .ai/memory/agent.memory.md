@@ -19,7 +19,7 @@
 ## Orchestration Intent
 
 - Nenhum agente deve operar sem ler primeiro as memorias e regras aplicaveis
-- `planner` nao fecha plano sem respeitar `test.step`, fixture central e convenios de naming
+- `planner` nao fecha plano sem respeitar `test.step`, fixture central, convenios de naming e estrutura `tests/<versao>/`
 - `generator` nao fecha implementacao sem passar pelo crivo de `reviewer` e `guardian`
 - `guardian` acumula o gate de seguranca e configuracao quando houver mudancas em auth, config, env ou URLs
 - `generator` deve passar por `data` quando introduzir ou mover massa de teste reutilizavel
@@ -27,6 +27,8 @@
 - `release` deve anteceder `planner` em upgrades ou investigacoes de impacto de release do Playwright
 - `healer` nao encerra uma correcao sem atualizar memoria relevante quando uma regra nova for descoberta
 - `knowledge` consolida aprendizado institucional, evitando que padroes fiquem apenas nas conversas
+- Testes ficam em `tests/<versao>/` organizados por release — cada nova release ganha subdiretorio proprio
+- Testes que gerenciam multiplos contextos (ex: `setStorageState`) podem importar Page Objects diretamente sem usar fixtures
 
 ## Change Discipline
 

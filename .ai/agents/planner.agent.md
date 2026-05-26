@@ -20,7 +20,7 @@ Este projeto usa:
 - Page Objects em `src/pages`
 - fixtures em `src/fixtures/fixtures.ts`
 - dados compartilhados em `src/data`
-- testes em `tests`
+- testes em `tests/<versao>`
 
 ## Quando Usar
 
@@ -104,7 +104,7 @@ O plano deve ser suficiente para o `generator` criar testes sem precisar reinter
 - Novos dados compartilhados devem entrar em `src/data`.
 - Variaveis de ambiente devem entrar por `.env`, com leitura em `playwright.config.ts` e helper explicito em `src/helpers/loginEnv.ts` para `BASE_URL`, `USERNAME` e `PASSWORD`.
 - Novas fixtures devem entrar em `src/fixtures/fixtures.ts` apenas se reduzirem duplicacao real.
-- Testes gerados a partir do plano devem importar `test` de `src/fixtures/fixtures.js`.
+- Testes gerados a partir do plano devem importar `test` de `../../src/fixtures/fixtures.js` (specs ficam em `tests/<versao>/`).
 - Specs geradas devem organizar acoes relevantes com `test.step`.
 - Specs NAO devem ter logica inline — toda logica fica em Page Object.
 - Page Objects devem ter todos os locators como `readonly` no constructor.
@@ -114,6 +114,8 @@ O plano deve ser suficiente para o `generator` criar testes sem precisar reinter
 - Quando houver tags no plano, specs geradas devem usar `test.describe(..., { tag: '@tag' })` e `test(..., { tag: '@tag' })`.
 - Page Objects devem expor metodos de acao pequenos e metodos `assert...` ou `expect...` para verificacoes de estado.
 - URLs devem vir do runtime configurado do Playwright, exceto no fluxo de login, onde `src/helpers/loginEnv.ts` fornece `BASE_URL` e credenciais.
+- Specs em `tests/<versao>/` usam imports com prefixo `../../src/`.
+- Testes que gerenciam multiplos contextos manualmente (ex: `setStorageState`) podem importar Page Objects diretamente em vez de usar fixtures.
 
 ## Anti-padroes
 

@@ -60,9 +60,13 @@ Use este agente quando:
 - Versao atual: Playwright Test `1.60.0`
 - Fixture central em `src/fixtures/fixtures.ts`
 - Helper de login em `src/helpers/loginEnv.ts`
-- Fluxos em `tests/singleProductCheckoutFlow.spec.ts` e `tests/multiProductCheckoutFlow.spec.ts`
+- Testes organizados por versao em `tests/1_56/`, `tests/1_57/`, `tests/1_58/`, `tests/1_59/`
+- Specs: `singleProductCheckoutFlow.spec.ts` (1_56), `multiProductCheckoutFlow.spec.ts` (1_57+), `storageManagement.spec.ts` (1_59)
 - Page Objects atuais: `loginPage.ts`, `inventoryPage.ts`, `cartPage.ts`, `checkoutPage.ts`
 - Todos os locators em Page Objects sao `readonly` no constructor
+- Page Objects usam `locator.describe()` para traces mais descritivos
+- Acoes criticas usam `click({ steps: 5 })`
+- Config usa `video.show` para anotacoes visuais automaticas
 
 ## Formato Esperado
 

@@ -39,10 +39,10 @@ Execute este workflow quando precisar criar um novo teste do zero.
 
 ### 3. Geracao (Agent: generator)
 - Gerar spec Playwright baseada no plano
-- Salvar em `tests/<fluxo>.spec.ts`
+- Salvar em `tests/<versao>/<fluxo>.spec.ts`
 - Spec DEVE seguir o padrao: so chamadas a Page Objects e dados, sem logica inline
 - Spec DEVE usar `test.step` para cada passo relevante
-- Spec DEVE importar `test` de `../src/fixtures/fixtures.js`
+- Spec DEVE importar `test` de `../../src/fixtures/fixtures.js`
 
 ### 4. Extensao de Page Objects (se necessario)
 - Novos locators DEVEM ser declarados como `readonly` na classe e inicializados no `constructor`
@@ -123,8 +123,8 @@ Se qualquer gate falhar:
 
 ### Spec Pattern
 ```ts
-import { checkoutCustomer } from '../src/data/checkoutData.js';
-import { test } from '../src/fixtures/fixtures.js';
+import { checkoutCustomer } from '../../src/data/checkoutData.js';
+import { test } from '../../src/fixtures/fixtures.js';
 
 test.describe('SauceDemo <descricao>', () => {
   test('<acao> with the standard user', async ({
@@ -144,6 +144,9 @@ test.describe('SauceDemo <descricao>', () => {
   });
 });
 ```
+
+Specs ficam em `tests/<versao>/` e usam imports com prefixo `../../src/`.
+Testes que gerenciam multiplos contextos podem importar Page Objects diretamente.
 
 ### Page Object Pattern
 ```ts

@@ -34,7 +34,7 @@ Use este agente quando:
 - atualizacao em `.ia/memory`
 - atualizacao em `.ia/rules`, se houver nova politica
 - atualizacao em `.ia/workflows`, quando processos mudarem
-- atualizacao em `.ia/agents/CHANGELOG.md`
+- atualizacao em `.ia/agents/CHANGELOG.md` (se existir)
 - validacao de `.env.example` quando config mudar
 - apontamento de workflow afetado
 
