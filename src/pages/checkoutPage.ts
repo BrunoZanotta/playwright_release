@@ -62,4 +62,8 @@ export class CheckoutPage {
     const total = parseFloat((await this.totalLabel.textContent())!.replace('Total: $', ''));
     expect(total).toBeCloseTo(itemTotal + tax, 2);
   }
+
+  async showChapter(title: string, options?: { description?: string; duration?: number }) {
+    await this.page.screencast.showChapter(title, options);
+  }
 }

@@ -42,7 +42,7 @@ Politica de evolucao:
 - gerar os agents apenas uma vez no baseline
 - nao recriar os arquivos automaticamente em cada release
 - editar os agents canonicos em `.ia/agents` quando novas capacidades do Playwright justificarem mudancas
-- registrar toda mudanca em `.ia/agents/CHANGELOG.md`
+- registrar toda mudanca em `.ia/agents/CHANGELOG.md` (se existir) ou em `.ai/decisions/`
 - manter `.vscode/mcp.json` usando `npx --no-install` para forcar o binario local do projeto
 
 ## Regras Globais

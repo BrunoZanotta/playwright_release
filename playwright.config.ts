@@ -24,7 +24,13 @@ export default defineConfig({
     baseURL,
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
-    video: 'retain-on-failure'
+    video: {
+      mode: 'retain-on-failure',
+      show: {
+        actions: { position: 'top-right' },
+        test: { position: 'top-left' }
+      }
+    }
   },
   projects: [
     {

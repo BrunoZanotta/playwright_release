@@ -60,9 +60,10 @@ Use este agente quando:
 ## Padrao Atual Do Projeto
 
 - `src/data/checkoutData.ts` e o exemplo canonico atual.
-- `checkoutCustomer` e compartilhado entre `singleProductCheckoutFlow.spec.ts` e `multiProductCheckoutFlow.spec.ts`.
-- `productName` permanece inline em `tests/singleProductCheckoutFlow.spec.ts` porque representa um detalhe especifico do fluxo.
-- `products` (array de 3 itens) permanece inline em `tests/multiProductCheckoutFlow.spec.ts` porque e especifico daquele cenario.
+- `checkoutCustomer` e compartilhado entre `tests/1_56/singleProductCheckoutFlow.spec.ts`, `tests/1_57/multiProductCheckoutFlow.spec.ts`, `tests/1_58/multiProductCheckoutFlow.spec.ts`, `tests/1_59/multiProductCheckoutFlow.spec.ts` e `tests/1_59/storageManagement.spec.ts`.
+- `productName` permanece inline em `tests/1_56/singleProductCheckoutFlow.spec.ts` porque representa um detalhe especifico do fluxo.
+- `products` (array de 3 itens) permanece inline em `tests/1_57/multiProductCheckoutFlow.spec.ts` e nas versoes de `1_58` e `1_59` porque e especifico daquele cenario.
+- `products` (array de 2 itens) permanece inline em `tests/1_59/storageManagement.spec.ts` porque e especifico daquele cenario.
 
 ## Bloqueios
 

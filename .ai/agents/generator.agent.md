@@ -47,7 +47,7 @@ Se nao houver plano formal, criar uma interpretacao minima do cenario antes de e
 
 O output principal e codigo versionavel, normalmente:
 
-- nova spec em `tests/<fluxo>.spec.ts`
+- nova spec em `tests/<versao>/<fluxo>.spec.ts`
 - ajustes pequenos em `src/pages/*.ts`
 - ajustes pequenos em `src/fixtures/fixtures.ts`
 - novos dados compartilhados em `src/data/*.ts`
@@ -55,7 +55,7 @@ O output principal e codigo versionavel, normalmente:
 Quando o output for acompanhado por artefato de IA, registrar em:
 
 - `.ia/test-plans/<feature>.md` para planos criados durante a geracao
-- `.ia/agents/CHANGELOG.md` para mudancas no proprio agente
+- `.ia/agents/CHANGELOG.md` para mudancas no proprio agente (se existir)
 
 Toda entrega deve informar:
 
@@ -72,7 +72,7 @@ Toda entrega deve informar:
 4. Executar ou explorar a aplicacao quando a UI ou o seletor nao estiverem claros.
 5. Reutilizar Page Objects antes de adicionar novos metodos.
 6. Adicionar novos metodos de Page Object apenas quando eles representarem uma acao ou verificacao do dominio.
-7. Escrever a spec com `test` importado de `../src/fixtures/fixtures.js`.
+7. Escrever a spec com `test` importado de `../../src/fixtures/fixtures.js` (imports usam `../../src/` porque specs ficam em `tests/<versao>/`).
 8. Quebrar o fluxo em `test.step` para cada passo relevante do plano.
 9. Aplicar `test.describe(..., { tag: '@tag' })` e `test(..., { tag: '@tag' })` quando o plano definir tags.
 10. Usar assertions web-first do Playwright.
@@ -165,8 +165,8 @@ Specs DEVEM seguir este padrao: so chamadas a Page Objects e dados, sem logica i
 Exemplo canonico (single product):
 
 ```ts
-import { checkoutCustomer } from '../src/data/checkoutData.js';
-import { test } from '../src/fixtures/fixtures.js';
+import { checkoutCustomer } from '../../src/data/checkoutData.js';
+import { test } from '../../src/fixtures/fixtures.js';
 
 test.describe('SauceDemo single product checkout', () => {
   test('completes a single product purchase with the standard user', async ({
@@ -210,8 +210,8 @@ test.describe('SauceDemo single product checkout', () => {
 Exemplo com multi-produtos e validacao de total:
 
 ```ts
-import { checkoutCustomer } from '../src/data/checkoutData.js';
-import { test } from '../src/fixtures/fixtures.js';
+import { checkoutCustomer } from '../../src/data/checkoutData.js';
+import { test } from '../../src/fixtures/fixtures.js';
 
 const products = [
   'Sauce Labs Backpack',
